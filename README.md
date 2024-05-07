@@ -127,6 +127,7 @@ install <name_of_component>
 ```
 Here's the list of used components:
   * LWP::UserAgent
+  * Mozilla::CA
   * JSON
   * MIME::Base64
   * Data::Dumper
