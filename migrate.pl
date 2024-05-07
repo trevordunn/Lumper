@@ -329,6 +329,11 @@ if ($exportLinks eq 'true') {
 	my %alreadyEstablishedLinksWith = map { $_ => () } keys %IssueLinks;
 
 	foreach my $issue (sort { $a->{numberInProject} <=> $b->{numberInProject} } @{$export}) {
+		if ($skip && $issue->{numberInProject} <= $skip) {
+			print "Skipping issue $YTProject-".$issue->{numberInProject}."\n";
+			next;
+		}
+
 		my $links = $yt->getIssueLinks(IssueKey => $issue->{id});
 
 		foreach my $link (@{$links}) {
