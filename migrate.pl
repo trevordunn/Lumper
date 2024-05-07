@@ -395,7 +395,7 @@ sub convertMarkdownToJira {
 	my @j2mCommand = ('j2m', '--toJ', '--stdin');
 	run(\@j2mCommand, \$textToConvert, \my $j2mConvertedText)
 		or die "Something wrong with J2M tool, is it installed? ".
-		"Try install it using:\n\n\tnpm install j2m --save\n\n";
+		"Try install it using:\n\n\tnpm install j2m -g\n\n";
 	return decode_utf8($j2mConvertedText);
 }
 
