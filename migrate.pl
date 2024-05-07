@@ -203,7 +203,7 @@ foreach my $issue (sort { $a->{numberInProject} <=> $b->{numberInProject} } @{$e
 		}
 	}
 
-	my $key = $jira->createIssue(Issue => \%import, CustomFields => \%custom) || warn "Error while creating issue";
+	my $key = $jira->createIssue(Issue => \%import, CustomFields => \%custom, Verbose => \%verbose) || warn "Error while creating issue";
 	print "Jira issue key generated $key\n";
 
 	# Checking issue number in key (eg in FOO-20 the issue number is 20)
