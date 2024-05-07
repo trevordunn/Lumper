@@ -32,18 +32,18 @@ sub generateDelimiterPart {
     my $delimiter = "--------------------".
                     "--------------------".
                     "--------------------";
-                    
+
     # Reduce '-' symbols based on title length + 2 spaces
     # on the trim only for one side of title.
-    return substr   $delimiter, 0, 
-                    $halfTitleLength - 
+    return substr   $delimiter, 0,
+                    $halfTitleLength -
                         int(($textLength + 2) / 2);
 }
 
 our sub printColumnAligned {
     my $self = shift;
     my $text = shift;
-    
+
     if (length($text) < 8) {
         print $text."\t\t\t";
     } elsif (length($text) < 16) {

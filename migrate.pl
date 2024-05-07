@@ -16,7 +16,7 @@ use Date::Format;
 use Encode;
 
 # Used to display column-like output
-my $display = display->new(); 
+my $display = display->new();
 
 $display->printTitle("Initialization");
 
@@ -67,14 +67,14 @@ foreach my $issue (@{$export}) {
 		$users{$_->{author}->{login}} = 1;
 	}
 }
-# Join those active with those that are listed in config 
+# Join those active with those that are listed in config
 # in case if config ones are not listed in the %users
 foreach my $configUser (keys %User) {
 	$users{$configUser} = 1;
 }
 print Dumper(%users) if ($verbose);
 
-my $check = check->new( 
+my $check = check->new(
 	Jira => $jira,
 	YouTrack => $yt,
 	Url => $JiraUrl,
@@ -115,14 +115,14 @@ $display->printTitle("Export To Jira");
 
 foreach my $issue (sort { $a->{numberInProject} <=> $b->{numberInProject} } @{$export}) {
 	$display->printTitle($YTProject."-".$issue->{numberInProject});
-	
+
 	if ($skip && $issue->{numberInProject} <= $skip) {
 		print "Skipping issue $YTProject-".$issue->{numberInProject}."\n";
 		next;
 	}
 	$issuesCount++;
 	last if ($maxissues && $issuesCount>$maxissues);
-	
+
 	my $attachmentFileNamesMapping;
 	my $attachments;
 
@@ -140,8 +140,8 @@ foreach my $issue (sort { $a->{numberInProject} <=> $b->{numberInProject} } @{$e
 	my $header = "";
 	if (not($exportCreationTime)) {
 		$header .= "[Created ";
-		if ($User{$issue->{reporter}->{login}} eq $JiraLogin) { 
-			$header .= "by ".$issue->{reporter}->{login}." "; 
+		if ($User{$issue->{reporter}->{login}} eq $JiraLogin) {
+			$header .= "by ".$issue->{reporter}->{login}." ";
 		}
 		$header .= $creationTime;
 		$header .= "]\n";
@@ -152,12 +152,12 @@ foreach my $issue (sort { $a->{numberInProject} <=> $b->{numberInProject} } @{$e
 	my $description = convertUserMentions($issue->{description});
 	$description = convertAttachmentsLinks($description, $attachmentFileNamesMapping);
 
-	if($convertTextFormatting eq 'true') {	
+	if($convertTextFormatting eq 'true') {
 		$description = convertCodeSnippets($description);
 		$description = convertQuotations($description);
 		$description = convertMarkdownToJira($description);
 	}
-	
+
 	my %import = ( project => { key => $JiraProject },
 	               issuetype => { name => $Type{$issue->{$typeCustomFieldName}} || $issue->{$typeCustomFieldName} },
                    assignee => { name => $User{$issue->{Assignee}} || $issue->{Assignee} },
@@ -179,8 +179,8 @@ foreach my $issue (sort { $a->{numberInProject} <=> $b->{numberInProject} } @{$e
 	if ($import{issuetype}->{name} == 'Epic') {
 		$custom{"Epic Name"} = $issue->{summary};
 	}
-	
-	# Add YouTrack original creation date field	
+
+	# Add YouTrack original creation date field
 	my %dateTimeFormats = (
 		RFC822 => "%a, %d %b %Y %H:%M:%S %z",
 		RFC3389 => "%Y-%m-%dT%H:%M:%S%z",
@@ -201,7 +201,7 @@ foreach my $issue (sort { $a->{numberInProject} <=> $b->{numberInProject} } @{$e
 			print "Found tags: ".Dumper(@tags) if ($verbose);
 		}
 	}
-	
+
 	my $key = $jira->createIssue(Issue => \%import, CustomFields => \%custom) || warn "Error while creating issue";
 	print "Jira issue key generated $key\n";
 
@@ -246,7 +246,7 @@ foreach my $issue (sort { $a->{numberInProject} <=> $b->{numberInProject} } @{$e
 		my $date = scalar localtime ($comment->{created}/1000);
 
 		my $text = $comment->{text};
-		
+
 		# Convert Markdown to Jira-specific rich text formatting
 		$text = convertUserMentions($text);
 		$text = convertAttachmentsLinks($text, $attachmentFileNamesMapping);
@@ -276,7 +276,7 @@ foreach my $issue (sort { $a->{numberInProject} <=> $b->{numberInProject} } @{$e
 		foreach my $workLog (@{$workLogs->{workItems}}) {
 			my @parsedTime = localtime ($issue->{created}/1000);
 			my %jiraWorkLog = (
-				author => { 
+				author => {
 					name => $User{ $workLog->{author}->{login} }
 				},
 				comment => $workLog->{text},
@@ -285,17 +285,17 @@ foreach my $issue (sort { $a->{numberInProject} <=> $b->{numberInProject} } @{$e
 			);
 
 			if ( defined $JiraPasswords{$User{ $workLog->{author}->{login} }} ) {
-				$jira->addWorkLog(Key => $key, 
-								WorkLog => \%jiraWorkLog, 
-								Login => $User{ $workLog->{author}->{login} }, 
-								Password => $JiraPasswords{$User{ $workLog->{author}->{login} }}) 
+				$jira->addWorkLog(Key => $key,
+								WorkLog => \%jiraWorkLog,
+								Login => $User{ $workLog->{author}->{login} },
+								Password => $JiraPasswords{$User{ $workLog->{author}->{login} }})
 					|| warn "\nError creating work log";
 			} else {
 				my $originalAuthor = "[ Original Author: ".$workLog->{author}->{login}." ]\n";
 				$jiraWorkLog{comment} = $originalAuthor."".$jiraWorkLog{comment};
-				$jira->addWorkLog(Key => $key, WorkLog => \%jiraWorkLog) 
+				$jira->addWorkLog(Key => $key, WorkLog => \%jiraWorkLog)
 					|| warn "\nError creating work log";
-			}			
+			}
 		}
 	}
 
@@ -320,7 +320,7 @@ foreach my $issue (sort { $a->{numberInProject} <=> $b->{numberInProject} } @{$e
 }
 
 # Create Issue Links
-if ($exportLinks eq 'true') {	
+if ($exportLinks eq 'true') {
 	$display->printTitle("Creating Issue Links");
 	# Turn YT issues to a hash to be able to search for issue ID
 	my %issuesById = map { $_->{id} => $_ } @{$export};
@@ -350,10 +350,10 @@ if ($exportLinks eq 'true') {
 					if ($link->{direction} eq 'INWARD' || $link->{direction} eq 'BOTH') {
 						$jiraLink->{inwardIssue}->{key} = $issue->{jiraKey};
 						$jiraLink->{outwardIssue}->{key} = $issuesById{$linkedIssue->{id}}->{jiraKey};
-					} elsif ($link->{direction} eq 'OUTWARD') {						
+					} elsif ($link->{direction} eq 'OUTWARD') {
 						$jiraLink->{inwardIssue}->{key} = $issuesById{$linkedIssue->{id}}->{jiraKey};
 						$jiraLink->{outwardIssue}->{key} = $issue->{jiraKey};
-					} 
+					}
 
 					if (not $alreadyEstablishedLinksWith{$link->{linkType}->{name}}{$linkedIssue->{id}}) {
 						print "Creating link between ".$jiraLink->{outwardIssue}->{key}." and ".$jiraLink->{inwardIssue}->{key}."\n";
@@ -369,7 +369,7 @@ if ($exportLinks eq 'true') {
 					}
 				}
 			}
-		}		
+		}
 	}
 }
 
@@ -385,15 +385,15 @@ sub ifProceed {
 # Converts Markdown text format to Jira format using J2M utility
 sub convertMarkdownToJira {
 	my $textToConvert = shift;
-	
+
 	my @j2mCommand = ('j2m', '--toJ', '--stdin');
-	run(\@j2mCommand, \$textToConvert, \my $j2mConvertedText) 
+	run(\@j2mCommand, \$textToConvert, \my $j2mConvertedText)
 		or die "Something wrong with J2M tool, is it installed? ".
 		"Try install it using:\n\n\tnpm install j2m --save\n\n";
 	return decode_utf8($j2mConvertedText);
 }
 
-# Converts user mentions to correct usernames 
+# Converts user mentions to correct usernames
 sub convertUserMentions {
 	my $textToConvert = shift;
 
@@ -403,7 +403,7 @@ sub convertUserMentions {
 	return $textToConvert;
 }
 
-# Converts links to attachments 
+# Converts links to attachments
 sub convertAttachmentsLinks {
 	my $textToConvert = shift;
 	my $attachmentFileNamesMapping = shift;

@@ -20,12 +20,12 @@ sub new {
 	my %arg = @_;
 	return unless $arg{Url};
 	my $self;
-	
+
 	$ua = LWP::UserAgent->new;
 	$ua->timeout(10);
 	$ua->default_headers->header(
-			'Content-Type'=>'application/json', 
-			'Accept'=>'application/json', 
+			'Content-Type'=>'application/json',
+			'Accept'=>'application/json',
 			'Authorization'=>'Bearer '.$arg{Token});
 
 	my $response = $ua->get($arg{Url}.'/api/users/me');
@@ -72,7 +72,7 @@ sub downloadAttachments {
 
 		my $localizedFileName = decode_utf8($attachment->{name});
 		$oldFileNamesDirectory{$localizedFileName} = "attachment$counter$suffix";
-		
+
 		# Rename the file to avoid problems with exotic file names
 		open my $fh, ">", "$tempdir/".$oldFileNamesDirectory{$localizedFileName};
 		binmode $fh;
@@ -88,7 +88,7 @@ sub downloadAttachments {
 sub getWorkLog {
 	my $self = shift;
 	my %arg = @_;
-	
+
 	return $self->sendRequestToYouTrack(
 				Request => '/api/issues/'.$arg{IssueKey}.'/timeTracking?'.
 											'fields='.
@@ -156,8 +156,8 @@ sub getAllLinkTypes {
 sub getAllCustomFields {
 	my $self = shift;
 	my %arg = @_;
-	
-	my $customFields = $self->sendRequestToYouTrack(	
+
+	my $customFields = $self->sendRequestToYouTrack(
 			Request => '/api/admin/projects/'.$self->{project}.'/customFields?'.
 							'fields='.
 								'field('.
@@ -197,7 +197,7 @@ sub exportIssues {
 	my %arg = @_;
 	my $max = $arg{Max} || 100000;
 
-	my $issues = $self->sendRequestToYouTrack(	
+	my $issues = $self->sendRequestToYouTrack(
 			Request => '/api/issues?'.
 										'query=project:%20'.$arg{Project}.'%20&'.
 										'$top='.$max.'&'.
@@ -233,7 +233,7 @@ sub exportIssues {
 				CharacterSupport => 'true');
 
 	foreach my $issue (@{$issues}) {
-		foreach my $field (@{$issue->{customFields}}) {	
+		foreach my $field (@{$issue->{customFields}}) {
 
 			$issue->{$field->{name}} = undef;
 			next if (not($field->{value}));
@@ -248,10 +248,10 @@ sub exportIssues {
 sub sendRequestToYouTrack {
 	my $self = shift;
 	my %arg = @_;
-	
+
 	my $response = $ua->get($self->{url}."".$arg{Request});
-	
-	if ($response->is_success) {		
+
+	if ($response->is_success) {
 		# All languages support
 		my $content = $response->decoded_content;
 		if ($arg{CharacterSupport} eq "true") {
@@ -270,14 +270,14 @@ sub sendRequestToYouTrack {
 
 my %periodType = (	'PeriodIssueCustomField' => 1);
 my %simpleType = (	'SimpleIssueCustomField' => 1,  'DateIssueCustomField' => 1);
-my %singleType = (	'SingleValueIssueCustomField'=> 1,  'StateIssueCustomField'=> 1,  
-					'SingleBuildIssueCustomField'=> 1,  'SingleUserIssueCustomField'=> 1,  
-					'SingleGroupIssueCustomField'=> 1,  'SingleVersionIssueCustomField'=> 1,  
-					'SingleOwnedIssueCustomField'=> 1,  'SingleEnumIssueCustomField'=> 1,  
+my %singleType = (	'SingleValueIssueCustomField'=> 1,  'StateIssueCustomField'=> 1,
+					'SingleBuildIssueCustomField'=> 1,  'SingleUserIssueCustomField'=> 1,
+					'SingleGroupIssueCustomField'=> 1,  'SingleVersionIssueCustomField'=> 1,
+					'SingleOwnedIssueCustomField'=> 1,  'SingleEnumIssueCustomField'=> 1,
 					'StateMachineIssueCustomField'=> 1);
-my %multiType = (	'MultiValueIssueCustomField'=> 1,  'MultiBuildIssueCustomField'=> 1,  
-					'MultiGroupIssueCustomField'=> 1,  'MultiVersionIssueCustomField'=> 1,  
-					'MultiOwnedIssueCustomField'=> 1,  'MultiEnumIssueCustomField'=> 1,  
+my %multiType = (	'MultiValueIssueCustomField'=> 1,  'MultiBuildIssueCustomField'=> 1,
+					'MultiGroupIssueCustomField'=> 1,  'MultiVersionIssueCustomField'=> 1,
+					'MultiOwnedIssueCustomField'=> 1,  'MultiEnumIssueCustomField'=> 1,
 					'MultiUserIssueCustomField'=> 1);
 my %textType = (	'TextIssueCustomField'=> 1);
 
@@ -306,9 +306,9 @@ sub collectValuesFromCustomField {
 		}
 	}
 	elsif ($multiType{$fieldType}) {
-		
+
 		my @multiValuesList;
-		foreach my $value (@{$customField->{value}}) {			
+		foreach my $value (@{$customField->{value}}) {
 			if (defined $value->{login}) {
 				push @multiValuesList, $value->{login};
 			} else {

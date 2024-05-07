@@ -16,7 +16,7 @@ sub new {
 	my %arg = @_;
 	return "No URL defined" unless $arg{Url};
 	my $basic = encode_base64($arg{Login}.":".$arg{Password});
-	my $cookie_jar;	
+	my $cookie_jar;
 	my $self;
 
 	if ($arg{CookieFile}) {
@@ -29,7 +29,7 @@ sub new {
 	$ua = LWP::UserAgent->new;
 	if ($arg{CookieFile}) {
 		$ua->cookie_jar( $cookie_jar );
-	}	
+	}
 	$ua->timeout(30);
 	my $response = $ua->get($arg{Url}.'/rest/auth/latest/session', Authorization => 'Basic '.$basic);
 	if ($response->is_success) {
@@ -45,7 +45,7 @@ sub new {
 		print "Project is defined in constructor. So I am going to get the metadata for project $arg{Project}\n" if $arg{Verbose};
 		my $response = $ua->get($arg{Url}.'/rest/api/latest/issue/createmeta?projectKeys='.$arg{Project}.'&expand=projects.issuetypes.fields', Authorization => 'Basic '.$basic);
 		if ($response->is_success) {
-			my $rawMeta = decode_json $response->decoded_content;	
+			my $rawMeta = decode_json $response->decoded_content;
 
 			foreach my $project (@{$rawMeta->{projects}}) {
 				if ($project->{key} eq $arg{Project}) {
@@ -61,7 +61,7 @@ sub new {
 			$self->{meta} = $meta;
 			$self->{project} = $arg{Project};
 		} else {
-			print 
+			print
 				die "Cannot get meta for project ".$arg{Project}." (".$response->status_line.")\n";
 		}
 	}
@@ -127,9 +127,9 @@ sub getAllStatuses {
 	unless (defined $issues->{key}) {
 		return [];
 	}
-	
+
 	my $response = $ua->get($self->{url}.'/rest/api/latest/issue/'.$issues->{key}.'/transitions?expand=transitions.fields', Authorization => 'Basic '.$self->{basic});
-	
+
 	if ($response->is_success) {
 		return \@{decode_json($response->decoded_content)->{transitions}};
 	} else {
@@ -156,10 +156,10 @@ sub addWorkLog {
 	my %workLog = %{$arg{WorkLog}};
 	my $content = encode_json \%workLog;
 
-	my $basic = ($arg{Login} && $arg{Password}) ? encode_base64($arg{Login}.":".$arg{Password}) : $self->{basic}; 
-	my $response = $ua->post($self->{url}.'/rest/api/latest/issue/'.$arg{Key}.'/worklog', 
-								Authorization => 'Basic '.$basic, 
-								'Content-Type' => 'application/json', 
+	my $basic = ($arg{Login} && $arg{Password}) ? encode_base64($arg{Login}.":".$arg{Password}) : $self->{basic};
+	my $response = $ua->post($self->{url}.'/rest/api/latest/issue/'.$arg{Key}.'/worklog',
+								Authorization => 'Basic '.$basic,
+								'Content-Type' => 'application/json',
 								'Content' => $content);
 
 }
@@ -209,7 +209,7 @@ sub createIssue {
 	foreach my $customField (keys %{$arg{CustomFields}}) {
 		my $fieldId = $self->{meta}->{fields}->{$arg{Issue}->{issuetype}->{name}}->{$customField};
 		my $fieldType = $self->{meta}->{fieldtypes}->{$customField};
-		
+
 		if (defined $fieldId && defined $fieldType) {
 			if ($fieldType eq 'string') {
 				$data{fields}->{$fieldId} = $arg{CustomFields}->{$customField};
@@ -352,7 +352,7 @@ sub createComment {
 	$data{body} = substr ($arg{Body}, 0, 32766); # Jira doesn't allow to post comments longer than 32k
 		my $content = encode_json \%data;
 	print $content."\n" if ($self->{verbose});
-	my $basic = ($arg{Login} && $arg{Password}) ? encode_base64($arg{Login}.":".$arg{Password}) : $self->{basic}; 
+	my $basic = ($arg{Login} && $arg{Password}) ? encode_base64($arg{Login}.":".$arg{Password}) : $self->{basic};
 	my $response = $ua->post($self->{url}.'/rest/api/latest/issue/'.$arg{IssueKey}.'/comment', Authorization => 'Basic '.$basic, 'Content-Type' => 'application/json', 'Content' => $content);
 	if ($response->is_success) {
 		return decode_json $response->decoded_content;

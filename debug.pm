@@ -23,7 +23,7 @@ if($deleteAll) {
                         Login       => $JiraLogin,
                         Password    => $JiraPassword
     );
-    
+
     unless ($jira) {
         die "Could not login to $JiraUrl\n";
     }
@@ -41,7 +41,7 @@ if($deleteAll) {
     print "\nAll issues deleted from Jira.";
 }
 
-our sub logToFile {    
+our sub logToFile {
     my $content = shift;
 
     open my $fh, ">", "debug.log";

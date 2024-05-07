@@ -17,7 +17,7 @@ my %allYtCustomFields;
 
 sub new {
     my ($class, %args) = @_;
-    
+
     $jira = $args{Jira};
     $yt = $args{YouTrack};
     $display = display->new();
@@ -64,7 +64,7 @@ our sub users {
         my $user = $_;
         my $jiraUser = $_;
         my $status = "OK";
-        
+
         if ($User{$user}) {
             $jiraUser = $User{$user};
         }
@@ -91,15 +91,15 @@ our sub issueTypes {
     my %ytDefinedIssueTypes = map {$_ => 1}  @{$allYtCustomFields{$typeCustomFieldName}};
     my %jiraDefinedIssueTypes = %{$meta->{fields}};
 
-    die "Cannot retrieve issue types. Probably YouTrack issue type field '$typeCustomFieldName' does not exists" 
+    die "Cannot retrieve issue types. Probably YouTrack issue type field '$typeCustomFieldName' does not exists"
         unless %ytDefinedIssueTypes;
 
-    foreach my $ytIssueType (sort keys %Type) {	
+    foreach my $ytIssueType (sort keys %Type) {
         die "\nIssue type '".$ytIssueType."' is present in config file but does ".
         "not exists in YouTrack. Please check config file and correct Type mapping.\n"
             unless (defined $ytDefinedIssueTypes{$ytIssueType});
     }
-    foreach my $ytIssueType (sort keys %ytDefinedIssueTypes) {		
+    foreach my $ytIssueType (sort keys %ytDefinedIssueTypes) {
         die "\nYouTrack has an issue type '$ytIssueType' but there's no such ".
         "mapping in config file. Please check config file and correct Type mapping.\n"
             unless (defined $Type{$ytIssueType});
@@ -121,12 +121,12 @@ our sub issueLinks {
     my %ytDefinedIssueLinkTypes = map { $_->{name} => 1 } @{$yt->getAllLinkTypes()};
     my %jiraDefinedIssueLinkTypes = map { $_->{name} => 1 } @{$jira->getAllLinkTypes()};
 
-    foreach my $ytIssueLinkType (sort keys %IssueLinks) {	
+    foreach my $ytIssueLinkType (sort keys %IssueLinks) {
         die "\nIssue link '".$ytIssueLinkType."' is present in config file but does ".
         "not exists in YouTrack. Please check config file and correct Type mapping.\n"
             unless (defined $ytDefinedIssueLinkTypes{$ytIssueLinkType});
     }
-    foreach my $issueLinkType (sort keys %ytDefinedIssueLinkTypes) {	
+    foreach my $issueLinkType (sort keys %ytDefinedIssueLinkTypes) {
         die "\nYouTrack has an issue link '$issueLinkType' but there's no such ".
         "mapping in config file. Please check config file and correct IssueLinks mapping.\n"
             unless (defined $IssueLinks{$issueLinkType});
@@ -156,12 +156,12 @@ our sub fields {
             die "\nThe mandatory field named '$creationTimeCustomFieldName' is absent ".
             "in Jira issue type '$jiraIssue'. ".
             "Please ensure that you've created custom field '$creationTimeCustomFieldName' and ".
-            "assigned it to '$jiraIssue' type of a issue." 
+            "assigned it to '$jiraIssue' type of a issue."
                 unless (defined $jiraDefinedFields{$jiraIssue}->{$creationTimeCustomFieldName});
         }
     }
     # Check all other fields
-    foreach my $field (sort keys %CustomFields) {	
+    foreach my $field (sort keys %CustomFields) {
         die "\nThe field '".$field."' is present in config file but does ".
         "not exists in YouTrack. Please check config file and correct CustomFields mapping.\n"
             unless (defined $ytDefinedFields{$field});
@@ -169,7 +169,7 @@ our sub fields {
             die "\nYouTrack field named '$field' is mapped to '".$CustomFields{$field}.
             "' and it is absent in Jira issue type '$jiraIssue'. ".
             "Please ensure that you've created custom field '".$CustomFields{$field}."' and ".
-            "assigned it to '$jiraIssue' type of a issue." 
+            "assigned it to '$jiraIssue' type of a issue."
                 unless (defined $jiraDefinedFields{$jiraIssue}->{$CustomFields{$field}});
         }
 
@@ -182,18 +182,18 @@ our sub priorities {
 
     my %Priority = %{$self->{Priorities}};
     my $priorityCustomFieldName = $self->{PriorityFieldName};
-    
+
     $display->printTitle("Priority Mapping");
 
     my %jiraDefinedPriorities = map { $_->{name} => 1} @{$jira->getAllPriorities()};
     my %ytDefinedPriorities = map { $_ => 1} @{$allYtCustomFields{$priorityCustomFieldName}};
 
     # Priority field must present in YouTrack
-    die "Cannot retrieve priorities. Probably YouTrack field '$priorityCustomFieldName' does not exists" 
+    die "Cannot retrieve priorities. Probably YouTrack field '$priorityCustomFieldName' does not exists"
         unless %ytDefinedPriorities;
 
-    # All priorities must be defined in config file 
-    foreach my $priority (sort keys %Priority) {	
+    # All priorities must be defined in config file
+    foreach my $priority (sort keys %Priority) {
         die "\nPriority '".$priority."' is present in config file but does ".
         "not exists in YouTrack. Please check config file and correct Priority mapping.\n"
             unless (defined $ytDefinedPriorities{$priority});
@@ -217,7 +217,7 @@ our sub statuses {
     my %Status = %{$self->{Statuses}};
     my %StatusToResolution = %{$self->{StatusToResolutions}};
     my $stateCustomFieldName = $self->{StatusFieldName};
-    
+
     $display->printTitle("Status Mapping");
 
     my %ytDefinedStatuses = map { $_ => 1 } @{$allYtCustomFields{$stateCustomFieldName}};
@@ -232,16 +232,16 @@ our sub statuses {
     }
 
     # Status field must present in both Jira and YouTrack
-    die "Cannot retrieve statuses. Probably YouTrack field '$stateCustomFieldName' does not exists" 
+    die "Cannot retrieve statuses. Probably YouTrack field '$stateCustomFieldName' does not exists"
         unless %ytDefinedStatuses;
-        
-    # All statuses must be defined in config file 
-    foreach my $state (sort keys %Status) {	
+
+    # All statuses must be defined in config file
+    foreach my $state (sort keys %Status) {
         die "\nStatus '".$state."' is present in config file but does ".
         "not exists in YouTrack. Please check config file and correct Status mapping.\n"
             unless (defined $ytDefinedStatuses{$state});
     }
-    
+
     # Now compare statuses with Jira
     foreach my $state (sort keys %ytDefinedStatuses) {
         die "\nYouTrack has a status '$state' but there's no such ".
@@ -250,11 +250,11 @@ our sub statuses {
         die "\nYouTrack status '$state' is mapped to '".($Status{$state} or $StatusToResolution{$state})."' but ".
         "there's no such state/resolution in Jira. Please check config file and ".
         "correct Status or Resolution mapping.\n"
-            unless (defined $jiraDefinedStatuses{$Status{$state}} or 
+            unless (defined $jiraDefinedStatuses{$Status{$state}} or
                     defined $jiraDefinedResolutions{$StatusToResolution{$state}});
 
         printRelation($state, $Status{$state});
-    } 
+    }
 }
 
 our sub resolutions {
@@ -262,15 +262,15 @@ our sub resolutions {
 
     my %StatusToResolution = %{$self->{StatusToResolutions}};
     my $stateCustomFieldName = $self->{StatusFieldName};
-        
+
     $display->printTitle("Status To Resolution Mapping");
-    
+
     my %jiraDefinedResolutions = map { $_->{name} => 1 } @{ $jira->getAllResolutions() };
     my %ytDefinedStatuses = map { $_ => 1 } @{$allYtCustomFields{$stateCustomFieldName}};
     my %ytDefinedResolutions = map { $_ => 1 } grep { $StatusToResolution{$_} } keys %ytDefinedStatuses;
 
     # Check status existance
-    foreach my $resolution (sort keys %StatusToResolution) {	
+    foreach my $resolution (sort keys %StatusToResolution) {
         die "\nStatus '".$resolution."' is present in config file but does ".
         "not exists in YouTrack. Please check config file and correct Resolution mapping.\n"
             unless (defined $ytDefinedResolutions{$resolution});
@@ -291,7 +291,7 @@ sub printRelation {
     my $related = shift;
     my $status = shift;
 
-    $display->printColumnAligned($relative);	
+    $display->printColumnAligned($relative);
     $display->printColumnAligned("        ->");
     $display->printColumnAligned($related);
     $display->printColumnAligned($status or "OK");

@@ -3,13 +3,20 @@ The tool for migration from YouTrack to Jira: easy and for free
 
 ## Table of Contents
 
-  1. [Capabilities](#capabilities)
-  1. [Environment Setup](#environment-setup)
-  1. [Prepare YouTrack](#prepare-yt)
-  1. [Prepare Jira](#prepare-jira)
-  1. [Do all the job](#do-job)
-  1. [Things To Remember](#things-to-remember)
-  1. [Needed Perl modules](#perl-modules)
+- [Lumper](#lumper)
+  - [Table of Contents](#table-of-contents)
+  - [Capabilities](#capabilities)
+  - [Environment Setup](#environment-setup)
+    - [Perl](#perl)
+    - [J2M Tool](#j2m-tool)
+  - [Prepare YouTrack](#prepare-youtrack)
+  - [Prepare Jira](#prepare-jira)
+  - [Do all the job](#do-all-the-job)
+  - [Things To Remember](#things-to-remember)
+    - [Restrictions For Some Fields](#restrictions-for-some-fields)
+    - [Note On Some Specific Issue Types](#note-on-some-specific-issue-types)
+    - [Attachments](#attachments)
+  - [Needed Perl modules](#needed-perl-modules)
 
 ## Capabilities
 Supported Versions (tested with):
@@ -54,7 +61,7 @@ npm install j2m --save
 1. Add `Reporter` field to the screens and add the permission for modifying reporter to your user
 1. Disable notifications for project and enable them after the migration to avoid overdisturbing the users
 1. If you are going to match some YT states to some Jira resolutions then you need to add `Resolution` field to the screens
-1. If you want to save the original creation date you must add `Original Creation Date` custom field in Jira (this field name is a subject to change). This must be the Date and Time type of a field. 
+1. If you want to save the original creation date you must add `Original Creation Date` custom field in Jira (this field name is a subject to change). This must be the Date and Time type of a field.
 1. Please make sure that your project workflow allows all needed transitions right from the initial state. Maybe you will need to prepare a simplified workflow to proceed with the migration and get back to your cool workflow afterwards.
 1. Make sure that Issue Linking feature is enabled in you Jira instance if you're planning to export issue links
 
@@ -69,7 +76,7 @@ Here's the list of minimum required issue fields:
 - _here goes other custom fields from `config.pl` configuration file_
 
 ## Do all the job
-First you will need to rename config.pl_example to config.pl and edit it for your needs. The file is well-commented and you will have no problems with it if you have some familiarity with Perl syntax (even if not). 
+First you will need to rename config.pl_example to config.pl and edit it for your needs. The file is well-commented and you will have no problems with it if you have some familiarity with Perl syntax (even if not).
 
 
 Then you just run the script:
@@ -89,7 +96,7 @@ Then you just run the script:
 Lean back in you chair and prepare for a very long process.
 ## Things To Remember
 ### Restrictions For Some Fields
-`Summary` - the title of your ticket will be cropped according to Jira restriction (max 255 symbols)  
+`Summary` - the title of your ticket will be cropped according to Jira restriction (max 255 symbols)
 
 `Description` - the body of the ticket cannot contain more than 32 767 symbols and it will be trimmed as well. However, long descriptions will be saved as `description.md` attachment.
 
@@ -99,21 +106,21 @@ Lean back in you chair and prepare for a very long process.
 ### Attachments
 Attachments will be renamed to `attachment<number>` to avoid problems with exotic filenames. However, attachment links will be exported correctly.
 
-Attachments will be saved on your hard disk during export process (in the temporary folder), please make sure you have enough free space for the whole process. 
+Attachments will be saved on your hard disk during export process (in the temporary folder), please make sure you have enough free space for the whole process.
 
 
 ## Needed Perl modules
-Make sure all of them present in your perl environment.  
-To install these components you'll need `cpan` utility. 
+Make sure all of them present in your perl environment.
+To install these components you'll need `cpan` utility.
 
-In cmd/bash type 
+In cmd/bash type
 ```bash
 cpan
-``` 
+```
 or you can run (which is the same)
-```bash 
+```bash
 perl -MCPAN -e shell
-``` 
+```
 then, inside the `cpan` utility run
 ```bash
 install <name_of_component>

@@ -26,14 +26,14 @@ our $creationTimeCustomFieldName='Original Creation Date';
 # If you having issues with date time parsing use JIRA8601 date time format
 # Possible values here: ISO8601, RFC3389, RFC822, GOST7064, JIRA8601
 our $creationDateTimeFormat='ISO8601';
-# YouTrack is using regular markdown language to create rich text formatting 
-# (__bold text__, _italic_, headers etc). Jira is different - it supports some 
-# specific rich text formatting language. 
+# YouTrack is using regular markdown language to create rich text formatting
+# (__bold text__, _italic_, headers etc). Jira is different - it supports some
+# specific rich text formatting language.
 # If you set this to true, then you'll need to install J2M utility. See README.md file for more info.
 our $convertTextFormatting='true';
 
-# In YouTrack the Issue Type, Priority and State are stored as custom fields 
-# with enum type of values by default. If you did change any of those field names, 
+# In YouTrack the Issue Type, Priority and State are stored as custom fields
+# with enum type of values by default. If you did change any of those field names,
 # please type it here
 our $typeCustomFieldName="Type";
 our $priorityCustomFieldName="Priority";
