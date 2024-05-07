@@ -202,8 +202,10 @@ sub createIssue {
 	# Jira doesn't allow to post summary longer than 255 bytes
 	$data{fields}->{summary} = substr ($data{fields}->{summary}, 0, 254);
 	# # Jira doesn't allow spaces in labels
-	foreach (@{$data{fields}->{labels}}) {
-		$_ =~ s/\s/_/g;
+	if (defined $data{fields}->{labels}) {
+		foreach (@{$data{fields}->{labels}}) {
+			$_ =~ s/\s/_/g;
+		}
 	}
 
 	foreach my $customField (keys %{$arg{CustomFields}}) {
