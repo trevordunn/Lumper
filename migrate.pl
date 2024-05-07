@@ -41,7 +41,7 @@ unless ($yt) {
 
 my $jira = jira->new(	Url         => $JiraUrl,
                     	Login       => $JiraLogin,
-                      	Password    => $JiraPassword,
+						Token       => $JiraToken,
                       	Verbose     => $verbose,
                       	Project     => $JiraProject,
 		      		 	CookieFile => $cookieFile,

@@ -15,7 +15,7 @@ sub new {
 	my $class = shift;
 	my %arg = @_;
 	return "No URL defined" unless $arg{Url};
-	my $basic = encode_base64($arg{Login}.":".$arg{Password});
+	my $basic = encode_base64($arg{Login}.":".$arg{Token});
 	my $cookie_jar;
 	my $self;
 
@@ -156,7 +156,7 @@ sub addWorkLog {
 	my %workLog = %{$arg{WorkLog}};
 	my $content = encode_json \%workLog;
 
-	my $basic = ($arg{Login} && $arg{Password}) ? encode_base64($arg{Login}.":".$arg{Password}) : $self->{basic};
+	my $basic = ($arg{Login} && $arg{Token}) ? encode_base64($arg{Login}.":".$arg{Token}) : $self->{basic};
 	my $response = $ua->post($self->{url}.'/rest/api/latest/issue/'.$arg{Key}.'/worklog',
 								Authorization => 'Basic '.$basic,
 								'Content-Type' => 'application/json',
@@ -227,7 +227,7 @@ sub createIssue {
 
 	my $content = encode_json \%data;
 	print $content."\n" if ($arg{Verbose});
-	my $basic = ($arg{Login} && $arg{Password}) ? encode_base64($arg{Login}.":".$arg{Password}) : $self->{basic};
+	my $basic = ($arg{Login} && $arg{Token}) ? encode_base64($arg{Login}.":".$arg{Token}) : $self->{basic};
 
 	my $response = $ua->post($self->{url}.'/rest/api/latest/issue', Authorization => 'Basic '.$basic, 'Content-Type' => 'application/json', 'Content' => $content);
 	if ($response->is_success) {
@@ -271,7 +271,7 @@ sub changeFields {
 
 	my $content = encode_json \%data;
 	print $content."\n" if ($arg{Verbose});
-	my $basic = ($arg{Login} && $arg{Password}) ? encode_base64($arg{Login}.":".$arg{Password}) : $self->{basic};
+	my $basic = ($arg{Login} && $arg{Token}) ? encode_base64($arg{Login}.":".$arg{Token}) : $self->{basic};
 
 	my $response = $ua->put($self->{url}.'/rest/api/latest/issue/'.$arg{Key}, Authorization => 'Basic '.$basic, 'Content-Type' => 'application/json', 'Content' => $content);
 	if ($response->is_success) {
@@ -352,7 +352,7 @@ sub createComment {
 	$data{body} = substr ($arg{Body}, 0, 32766); # Jira doesn't allow to post comments longer than 32k
 		my $content = encode_json \%data;
 	print $content."\n" if ($self->{verbose});
-	my $basic = ($arg{Login} && $arg{Password}) ? encode_base64($arg{Login}.":".$arg{Password}) : $self->{basic};
+	my $basic = ($arg{Login} && $arg{Token}) ? encode_base64($arg{Login}.":".$arg{Token}) : $self->{basic};
 	my $response = $ua->post($self->{url}.'/rest/api/latest/issue/'.$arg{IssueKey}.'/comment', Authorization => 'Basic '.$basic, 'Content-Type' => 'application/json', 'Content' => $content);
 	if ($response->is_success) {
 		return decode_json $response->decoded_content;
