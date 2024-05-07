@@ -139,7 +139,7 @@ foreach my $issue (sort { $a->{numberInProject} <=> $b->{numberInProject} } @{$e
 	# Prepare creation time message if exportCreationTime setting is not set
 	my $creationTime = scalar localtime ($issue->{created}/1000);
 	my $header = "";
-	if (not($exportCreationTime)) {
+	if ($exportCreationTime eq 'false') {
 		$header .= "[Created ";
 		if ($User{$issue->{reporter}->{login}} eq $JiraLogin) {
 			$header .= "by ".$issue->{reporter}->{login}." ";
