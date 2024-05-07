@@ -20,7 +20,7 @@ sub new {
 	my $self;
 
 	if ($arg{CookieFile}) {
-		print "Asked to use Cookie_file at $arg{CookieFile}\n" if ($self->{verbose});
+		print "Asked to use Cookie_file at $arg{CookieFile}\n" if ($arg{Verbose});
 		$cookie_jar = HTTP::Cookies::Netscape->new(
 		file     => $arg{CookieFile},
 		);
@@ -33,11 +33,11 @@ sub new {
 	$ua->timeout(30);
 	my $response = $ua->get($arg{Url}.'/rest/auth/latest/session', Authorization => 'Basic '.$basic);
 	if ($response->is_success) {
-		print "Logged to Jira successfully\n" if ($self->{verbose});
+		print "Logged to Jira successfully\n" if ($arg{Verbose});
 		$self = { basic => $basic, url => $arg{Url}, verbose => $arg{Verbose} };
 	} else {
-		print "Login to Jira was unsuccessfull\n" if ($self->{verbose});;
-		print $response->status_line if ($self->{verbose});
+		print "Login to Jira was unsuccessfull\n" if ($arg{Verbose});;
+		print $response->status_line if ($arg{Verbose});
 		return;
 	}
 
@@ -169,7 +169,7 @@ sub getIssue {
 	my %arg = @_;
 	my $response = $ua->get($self->{url}.'/rest/api/latest/issue/'.$arg{Key}, Authorization => 'Basic '.$self->{basic});
 	if ($response->is_success) {
-		print $response->decoded_content if ($self->{verbose});
+		print $response->decoded_content if ($arg{Verbose});
 	} else {
 		print "Got error while getting issue\n";
 		print $response->status_line;
@@ -182,8 +182,8 @@ sub deleteIssue {
 	my $response = $ua->delete($self->{url}.'/rest/api/latest/issue/'.$arg{Key}, Authorization => 'Basic '.$self->{basic});
 	if ($response->is_success) {
 		print "Issue ".$arg{Key}." deleted.\n";
-		print $response->status_line."\n" if ($self->{verbose});
-		print $response->decoded_content."\n" if ($self->{verbose});
+		print $response->status_line."\n" if ($arg{Verbose});
+		print $response->decoded_content."\n" if ($arg{Verbose});
 		return 1;
 	} else {
 		print "Got error while deleting issue\n";
@@ -226,15 +226,15 @@ sub createIssue {
 	}
 
 	my $content = encode_json \%data;
-	print $content."\n" if ($self->{verbose});
+	print $content."\n" if ($arg{Verbose});
 	my $basic = ($arg{Login} && $arg{Password}) ? encode_base64($arg{Login}.":".$arg{Password}) : $self->{basic};
 
 	my $response = $ua->post($self->{url}.'/rest/api/latest/issue', Authorization => 'Basic '.$basic, 'Content-Type' => 'application/json', 'Content' => $content);
 	if ($response->is_success) {
-		print $response->status_line."\n" if ($self->{verbose});
-		print $response->decoded_content."\n" if ($self->{verbose});
+		print $response->status_line."\n" if ($arg{Verbose});
+		print $response->decoded_content."\n" if ($arg{Verbose});
 		my $answer = decode_json $response->decoded_content;
-		print $answer->{key}."\n" if ($self->{verbose});
+		print $answer->{key}."\n" if ($arg{Verbose});
 		return $answer->{key};
 	} else {
 		print "Got error while creating issues\n";
@@ -270,13 +270,13 @@ sub changeFields {
 	#print Dumper (\%data);
 
 	my $content = encode_json \%data;
-	print $content."\n" if ($self->{verbose});
+	print $content."\n" if ($arg{Verbose});
 	my $basic = ($arg{Login} && $arg{Password}) ? encode_base64($arg{Login}.":".$arg{Password}) : $self->{basic};
 
 	my $response = $ua->put($self->{url}.'/rest/api/latest/issue/'.$arg{Key}, Authorization => 'Basic '.$basic, 'Content-Type' => 'application/json', 'Content' => $content);
 	if ($response->is_success) {
-		print $response->status_line."\n" if ($self->{verbose});
-		print $response->decoded_content."\n" if ($self->{verbose});
+		print $response->status_line."\n" if ($arg{Verbose});
+		print $response->decoded_content."\n" if ($arg{Verbose});
 		return 1;
 	} else {
 		print "Got error while changing fields\n";
@@ -311,10 +311,10 @@ sub doTransition {
 
 	$data{transition} = { "id" => $transitionId };
 	my $content = encode_json \%data;
-	print $content."\n" if ($self->{verbose});
+	print $content."\n" if ($arg{Verbose});
 	$response = $ua->post($self->{url}.'/rest/api/latest/issue/'.$arg{Key}.'/transitions', Authorization => 'Basic '.$self->{basic}, 'Content-Type' => 'application/json', 'Content' => $content);
 	if ($response->is_success) {
-		print $response->status_line."\n" if ($self->{verbose});
+		print $response->status_line."\n" if ($arg{Verbose});
 		return 1;
 	} else {
 		print "Got error while doing transition\n";
@@ -331,11 +331,11 @@ sub createIssues {
 		push @{$data{issueUpdates}}, { fields => $_ };
 	}
 	my $content = encode_json \%data;
-	print $content."\n" if ($self->{verbose});
+	print $content."\n" if ($arg{Verbose});
 	my $response = $ua->post($self->{url}.'/rest/api/latest/issue/bulk', Authorization => 'Basic '.$self->{basic}, 'Content-Type' => 'application/json', 'Content' => $content);
 	if ($response->is_success) {
-		print $response->status_line."\n" if ($self->{verbose});
-		print $response->decoded_content if ($self->{verbose});
+		print $response->status_line."\n" if ($arg{Verbose});
+		print $response->decoded_content if ($arg{Verbose});
 		my $answer = decode_json $response->decoded_content;
 	} else {
 		print "Got error while creating issue\n";
@@ -368,13 +368,13 @@ sub createIssueLink {
 	my $self = shift;
 	my %arg = @_;
 	my $content = encode_json $arg{Link};
-	print $content."\n" if ($self->{verbose});
+	print $content."\n" if ($arg{Verbose});
 	my $response = $ua->post($self->{url}.'/rest/api/latest/issueLink', Authorization => 'Basic '.$self->{basic}, 'Content-Type' => 'application/json', 'Content' => $content);
 	if ($response->is_success) {
-		print $response->decoded_content."\n" if ($self->{verbose});
+		print $response->decoded_content."\n" if ($arg{Verbose});
 		return 1;
 	}
-	print $response->status_line."\n" if ($self->{verbose});
+	print $response->status_line."\n" if ($arg{Verbose});
 	return;
 }
 
@@ -389,8 +389,8 @@ sub addAttachments {
 		}
 		my $response = $ua->post($self->{url}.'/rest/api/latest/issue/'.$arg{IssueKey}.'/attachments', Authorization => 'Basic '.$self->{basic}, 'Content_Type' => 'multipart/form-data', Content => [file => [$file]], 'X-Atlassian-Token' => 'no-check');
 		if ($response->is_success) {
-			print $response->status_line."\n" if ($self->{verbose});
-			print $response->decoded_content if ($self->{verbose});
+			print $response->status_line."\n" if ($arg{Verbose});
+			print $response->decoded_content if ($arg{Verbose});
 		} else {
 			print "Got error while uploading files\n";
 			print $response->status_line."\n";
