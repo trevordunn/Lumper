@@ -124,3 +124,5 @@ our %JiraPasswords = (
 	'bar' => 'passofbar',
 	'onemoreuser' => 'onemorepass'
 );
+
+1;
