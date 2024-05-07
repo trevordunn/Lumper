@@ -108,11 +108,14 @@ our %IssueLinks = (
 	"Subtask" => "Relates"
 );
 
-# User mapping. By default the username stays the same
+# User account id mapping. By default users map to $DefaultUserId
 our %User = (
-	'john.doe' => 'jdoe',
-	'foo' => 'bar'
+	'john.doe' => '123456',
+	'foo' => '7895662'
 );
+
+# The default user to use if others can't be found
+our $DefaultUserId='15452345';
 
 # This hash is optional and needed to restore the comments from appropriate users. If the user is absent then his
 # comments will be restored from $JiraUser and the original user will be mentioned in the comment body

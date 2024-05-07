@@ -56,7 +56,7 @@ our sub users {
 
     my %users = %{$self->{RealUsers}};
     my %User = %{$self->{Users}};
-    my $JiraLogin = $self->{JiraLogin};
+    my $DefaultUserId = $self->{DefaultUserId};
 
     $display->printTitle("User Mapping");
 
@@ -69,8 +69,8 @@ our sub users {
             $jiraUser = $User{$user};
         }
         unless ($jira->getUser(User => $jiraUser)) {
-            $jiraUser = $JiraLogin;
-            $User{$user} = $JiraLogin;
+            $jiraUser = $DefaultUserId;
+            $User{$user} = $DefaultUserId;
             $status = "WARNING";
         }
 

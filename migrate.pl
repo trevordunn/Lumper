@@ -79,6 +79,7 @@ my $check = check->new(
 	YouTrack => $yt,
 	Url => $JiraUrl,
 	JiraLogin => $JiraLogin,
+	DefaultUserId => $DefaultUserId,
 	Passwords => \%JiraPasswords,
 	RealUsers =>  \%users,
 	Users => \%User,
